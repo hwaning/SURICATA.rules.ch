@@ -1,0 +1,118 @@
+# Emerging Threats 
+#
+# This distribution may contain rules under two different licenses. 
+#
+#  Rules with sids 1 through 3464, and 100000000 through 100000908 are under the GPLv2.
+#  A copy of that license is available at http://www.gnu.org/licenses/gpl-2.0.html
+#
+#  Rules with sids 2000000 through 2799999 are from Emerging Threats and are covered under the BSD License 
+#  as follows:
+#
+#*************************************************************
+#  Copyright (c) 2003-2019, Emerging Threats
+#  All rights reserved.
+#  
+#  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+#  following conditions are met:
+#  
+#  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+#    disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+#    following disclaimer in the documentation and/or other materials provided with the distribution.
+#  * Neither the name of the nor the names of its contributors may be used to endorse or promote products derived 
+#    from this software without specific prior written permission.
+#  
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+#  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+#  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+#
+#*************************************************************
+#
+#
+#
+#
+
+# This Ruleset is EmergingThreats Open optimized for suricata-5.0-enhanced.
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP地址掩码回复未定义的代码"; icode:>0; itype:18; classtype:misc-activity; sid:2100387; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP地址掩码请求未定义的代码"; icode:>0; itype:17; classtype:misc-activity; sid:2100389; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP备用主机地址未定义的代码"; icode:>0; itype:6; classtype:misc-activity; sid:2100391; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP数据报转换错误未定义的代码"; icode:>0; itype:31; classtype:misc-activity; sid:2100393; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP数据报转换错误"; icode:0; itype:31; classtype:misc-activity; sid:2100392; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP无法到达目标的未定义代码"; icode:>15; itype:3; classtype:misc-activity; sid:2100407; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP回显应答未定义的代码"; icode:>0; itype:0; classtype:misc-activity; sid:2100409; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPIPV6 I-Am-Here未定义代码"; icode:>0; itype:34; classtype:misc-activity; sid:2100412; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPIPV6你在哪里未定义代码"; icode:>0; itype:33; classtype:misc-activity; sid:2100414; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP信息请求未定义代码"; icode:>0; itype:15; classtype:misc-activity; sid:2100418; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPL3检索器Ping"; icode:0; itype:8; content:"ABCDEFGHIJKLMNOPQRSTUVWABCDEFGHI"; depth:32; reference:arachnids,311; classtype:attempted-recon; sid:2100466; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP大ICMP数据包"; dsize:>800; reference:arachnids,246; classtype:bad-unknown; sid:2100499; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP移动主机重定向未定义的代码"; icode:>0; itype:32; classtype:misc-activity; sid:2100420; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP移动注册回复未定义代码"; icode:>0; itype:36; classtype:misc-activity; sid:2100422; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP移动注册请求未定义的代码"; icode:>0; itype:35; classtype:misc-activity; sid:2100424; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPPING未定义的代码"; icode:>0; itype:8; classtype:misc-activity; sid:2100365; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP参数问题长度错误"; icode:2; itype:12; classtype:misc-activity; sid:2100425; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP参数问题缺少必需的选项"; icode:1; itype:12; classtype:misc-activity; sid:2100426; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP参数问题未指定错误"; icode:0; itype:12; classtype:misc-activity; sid:2100427; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未定义代码的参数问题"; icode:>2; itype:12; classtype:misc-activity; sid:2100428; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP菲图里斯保留"; icode:0; itype:40; classtype:misc-activity; sid:2100429; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未知安全参数索引"; icode:1; itype:40; classtype:misc-activity; sid:2100430; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP But Authentication Failed, But Authentication Failed"; icode:2; itype:40; classtype:misc-activity; sid:2100431; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP But Authentication Failed, But Decryption Failed"; icode:3; itype:40; classtype:misc-activity; sid:2100432; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPPhoturis未定义代码！"; icode:>3; itype:40; classtype:misc-activity; sid:2100433; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP重定向未定义的代码"; icode:>3; itype:5; classtype:misc-activity; sid:2100438; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP为安全类型19保留未定义的代码"; icode:>0; itype:19; classtype:misc-activity; sid:2100440; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP为安全类型19保留"; icode:0; itype:19; classtype:misc-activity; sid:2100439; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP跳过未定义的代码"; icode:>0; itype:39; classtype:misc-activity; sid:2100446; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP源淬火未定义代码"; icode:>0; itype:4; classtype:misc-activity; sid:2100448; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP时间戳回复未定义的代码"; icode:>0; itype:14; classtype:misc-activity; sid:2100452; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP时间戳请求未定义的代码"; icode:>0; itype:13; classtype:misc-activity; sid:2100454; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMPTraceroute未定义代码"; icode:>0; itype:30; classtype:misc-activity; sid:2100457; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未分配类型1未定义代码"; itype:1; classtype:misc-activity; sid:2100459; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未分配类型2未定义代码"; itype:2; classtype:misc-activity; sid:2100461; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未分配类型7未定义代码"; itype:7; classtype:misc-activity; sid:2100463; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"GPL ICMP信息回复未定义代码"; icode:>0; itype:16; classtype:misc-activity; sid:2100416; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"GPL ICMP在传输中超过生存时间未定义的代码"; icode:>1; itype:11; classtype:misc-activity; sid:2100450; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL ICMP未定义的代码"; icode:>18; classtype:misc-activity; sid:2100197; rev:4; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+

@@ -1,0 +1,274 @@
+# Emerging Threats 
+#
+# This distribution may contain rules under two different licenses. 
+#
+#  Rules with sids 1 through 3464, and 100000000 through 100000908 are under the GPLv2.
+#  A copy of that license is available at http://www.gnu.org/licenses/gpl-2.0.html
+#
+#  Rules with sids 2000000 through 2799999 are from Emerging Threats and are covered under the BSD License 
+#  as follows:
+#
+#*************************************************************
+#  Copyright (c) 2003-2019, Emerging Threats
+#  All rights reserved.
+#  
+#  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+#  following conditions are met:
+#  
+#  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+#    disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+#    following disclaimer in the documentation and/or other materials provided with the distribution.
+#  * Neither the name of the nor the names of its contributors may be used to endorse or promote products derived 
+#    from this software without specific prior written permission.
+#  
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+#  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+#  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+#
+#*************************************************************
+#
+#
+#
+#
+
+# This Ruleset is EmergingThreats Open optimized for suricata-5.0-enhanced.
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射kcms服务器请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87|}"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,6665; reference:cve,2003-0027; reference:url,www.kb.cert.org/vuls/id/850785; classtype:rpc-portmap-decode; sid:2102005; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射kcms服务器请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87|}"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,6665; reference:cve,2003-0027; reference:url,www.kb.cert.org/vuls/id/850785; classtype:rpc-portmap-decode; sid:2102006; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 32771:34000 (msg:"GPL RPCkcms服务器目录遍历尝试"; flow:to_server,established; content:"|00 01 87|}"; depth:4; offset:16; byte_jump:4,20,relative,align; byte_jump:4,4,relative,align; content:"/../"; distance:0; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,6665; reference:cve,2003-0027; reference:url,www.kb.cert.org/vuls/id/850785; classtype:misc-attack; sid:2102007; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射未设置尝试TCP 111"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 02|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,1892; classtype:rpc-portmap-decode; sid:2102014; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射未设置尝试UDP 111"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 02|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,1892; classtype:rpc-portmap-decode; sid:2102015; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射状态请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B8|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,15; classtype:rpc-portmap-decode; sid:2102016; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射espd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 05 F7|u"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2714; reference:cve,2001-0331; classtype:rpc-portmap-decode; sid:2102017; rev:13; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC装载的TCP转储请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 02|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:attempted-recon; sid:2102018; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的UDP转储请求"; content:"|00 01 86 A5|"; depth:4; offset:12; content:"|00 00 00 02|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:attempted-recon; sid:2102019; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的TCP卸载请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:attempted-recon; sid:2102020; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的UDP卸载请求"; content:"|00 01 86 A5|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:attempted-recon; sid:2102021; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的TCP卸载请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 04|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:attempted-recon; sid:2102022; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd用户名溢出尝试UDP"; content:"|00 01 86 A9|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,0,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102025; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd用户名溢出尝试TCP"; flow:to_server,established; content:"|00 01 86 A9|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,0,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102026; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射集尝试UDP 111"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101950; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的TCP装入请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:attempted-recon; sid:2101951; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的UDP装入请求"; content:"|00 01 86 A5|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:attempted-recon; sid:2101952; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCsadmind UDP需要目标不可访问的碎片，并且已设置DF位"; content:"|00 01 87 88|"; depth:4; offset:12; content:"|00 00 00 00|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,866; classtype:attempted-admin; sid:2101957; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC所以记住TCP需要目标不可访问的碎片，并且已设置DF位"; flow:to_server,established; content:"|00 01 87 88|"; depth:4; offset:16; content:"|00 00 00 00|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,866; classtype:attempted-admin; sid:2101958; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射NFS请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A3|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101959; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射NFS请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A3|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2101960; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射RQUOTA请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 AB|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101961; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射RQUOTA请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 AB|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2101962; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCRQUOTA山羊quota溢出尝试UDP"; content:"|00 01 86 AB|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,128,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,864; reference:cve,1999-0974; classtype:misc-attack; sid:2101963; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCtooltalk UDP溢出尝试"; content:"|00 01 86 F3|"; depth:4; offset:12; content:"|00 00 00 07|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,128,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,122; reference:cve,1999-0003; classtype:misc-attack; sid:2101964; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCtooltalk TCP溢出尝试"; flow:to_server,established; content:"|00 01 86 F3|"; depth:4; offset:16; content:"|00 00 00 07|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,128,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,122; reference:cve,1999-0003; classtype:misc-attack; sid:2101965; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射集尝试TCP 111"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2101949; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射代理尝试TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 05|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2101922; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC代理尝试UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 05|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101923; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的TCP Exportall请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 06|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,26; classtype:attempted-recon; sid:2101925; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCCMSD UDP CMSD创建缓冲区溢出尝试"; content:"|00 01 86 E4|"; depth:4; offset:12; content:"|00 00 00 15|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1024,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,524; reference:cve,1999-0696; classtype:attempted-admin; sid:2101907; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCCMSD TCP CMSD创建缓冲区溢出尝试"; flow:to_server,established; content:"|00 01 86 E4|"; depth:4; offset:16; content:"|00 00 00 15|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1024,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,524; reference:cve,1999-0696; classtype:attempted-admin; sid:2101908; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCCMSD TCP CMSD插入缓冲区溢出尝试"; flow:to_server,established; content:"|00 01 86 E4|"; depth:4; offset:16; content:"|00 00 00 06|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,0,relative,align; byte_test:4,>,1000,28,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,524; reference:cve,1999-0696; reference:url,www.cert.org/advisories/CA-99-08-cmsd.html; classtype:misc-attack; sid:2101909; rev:13; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCsadmind TCP NETMGT PROC SERVICE客户端域溢出尝试"; flow:to_server,established; content:"|00 01 87 88|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,124,relative,align; byte_jump:4,20,relative,align; byte_test:4,>,512,4,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,0866; reference:bugtraq,866; reference:cve,1999-0977; classtype:attempted-admin; sid:2101912; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCSTATD UDP State mon name format string攻击尝试"; content:"|00 01 86 B8|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,100,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,1480; reference:cve,2000-0666; classtype:attempted-admin; sid:2101913; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCSTATD TCP State mon name format string攻击尝试"; flow:to_server,established; content:"|00 01 86 B8|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,100,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,1480; reference:cve,2000-0666; classtype:attempted-admin; sid:2101914; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCSTATD UDP监视器mon name format string攻击尝试"; content:"|00 01 86 B8|"; depth:4; offset:12; content:"|00 00 00 02|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,100,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,1480; reference:cve,2000-0666; classtype:attempted-admin; sid:2101915; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCSTATD TCP monitor mon name format string攻击尝试"; flow:to_server,established; content:"|00 01 86 B8|"; depth:4; offset:16; content:"|00 00 00 02|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,100,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,1480; reference:cve,2000-0666; classtype:attempted-admin; sid:2101916; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 1024: (msg:"GPL RPCGHBN格式字符串攻击状态"; flow:to_server, established; content:"|00 01 86 B8|"; depth:4; offset:16; content:"|00 00 00 02|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"%x %x"; within:256; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,1480; reference:cve,2000-0666; classtype:misc-attack; sid:2101891; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 177 (msg:"GPL RPCxdmcp信息查询"; content:"|00 01 00 02 00 01 00|"; reference:nessus,10891; classtype:attempted-recon; sid:2101867; rev:2; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射cachefsd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 8B|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,4674; reference:cve,2002-0033; reference:cve,2002-0084; classtype:rpc-portmap-decode; sid:2101746; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射cachefsd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 8B|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,4674; reference:cve,2002-0033; reference:cve,2002-0084; classtype:rpc-portmap-decode; sid:2101747; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rwalld请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A8|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101732; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rwalld请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A8|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2101733; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的UDP导出所有请求"; content:"|00 01 86 A5|"; depth:4; offset:12; content:"|00 00 00 06|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:attempted-recon; sid:2101926; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的UDP导出请求"; content:"|00 01 86 A5|"; depth:4; offset:12; content:"|00 00 00 05|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:attempted-recon; sid:2101924; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET 32771 (msg:"GPL RPC端口映射列表UDP 32771"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 04|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101281; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ypupdated请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 BC|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2101277; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC具有根凭据的sadmind查询尝试UDP"; content:"|00 01 87 88|"; fast_pattern; depth:4; offset:12; content:"|00 00 00 01 00 00 00 01|"; within:8; distance:4; byte_jump:4,8,relative,align; content:"|00 00 00 00|"; within:4; classtype:misc-attack; sid:2102256; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC使用根凭据的sadmind查询尝试TCP"; flow:to_server,established; content:"|00 01 87 88|"; fast_pattern; depth:4; offset:16; content:"|00 00 00 01 00 00 00 01|"; within:8; distance:4; byte_jump:4,8,relative,align; content:"|00 00 00 00|"; within:4; classtype:misc-attack; sid:2102255; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC装载的UDP装载路径溢出尝试"; content:"|00 01 86 A5 00|"; depth:5; offset:12; content:"|00 00 00 01|"; within:4; distance:3; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1023,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,8179; reference:cve,2003-0252; reference:nessus,11800; classtype:misc-attack; sid:2102185; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC装载的TCP装载路径溢出尝试"; flow:to_server,established; content:"|00 01 86 A5 00|"; depth:5; offset:16; content:"|00 00 00 01|"; within:4; distance:3; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1023,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,8179; reference:cve,2003-0252; reference:nessus,11800; classtype:misc-attack; sid:2102184; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 512 (msg:"GPL RPCrexec密码溢出尝试"; flow:to_server,established; content:"|00|"; content:"|00|"; distance:33; content:"|00|"; distance:0; classtype:attempted-admin; sid:2102114; rev:4; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $HOME_NET 512 -> $EXTERNAL_NET any (msg:"GPL RPCrexec用户名响应太长"; flow:from_server,established; content:"username too long"; depth:17; reference:bugtraq,7459; classtype:unsuccessful-user; sid:2102104; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCCMSD TCP CMSD创建阵列缓冲区溢出尝试"; flow:to_server,established; content:"|00 01 86 E4|"; depth:4; offset:16; content:"|00 00 00 15|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1024,20,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,5356; reference:cve,2002-0391; classtype:attempted-admin; sid:2102095; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCCMSD UDP CMSD创建阵列缓冲区溢出尝试"; content:"|00 01 86 E4|"; depth:4; offset:12; content:"|00 00 00 15|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1024,20,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,5356; reference:cve,2002-0391; classtype:attempted-admin; sid:2102094; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC代理端口映射整数溢出尝试TCP"; flow:to_server,established; content:"|00 01 86 A0 00|"; depth:5; offset:16; content:"|00 00 00 05|"; within:4; distance:3; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,2048,12,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,7123; reference:cve,2003-0028; classtype:rpc-portmap-decode; sid:2102093; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCypupdated任意命令尝试UDP"; content:"|00 01 86 BC|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|7C|"; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:misc-attack; sid:2102088; rev:6; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCrpc.xfsmd xfs导出尝试TCP"; flow:to_server,established; content:"|00 05 F7|h"; depth:4; offset:16; content:"|00 00 00 0D|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,5072; reference:bugtraq,5075; reference:cve,2002-0359; classtype:rpc-portmap-decode; sid:2102084; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCrpc.xfsmd xfs导出尝试UDP"; content:"|00 05 F7|h"; depth:4; offset:12; content:"|00 00 00 0D|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,5072; reference:bugtraq,5075; reference:cve,2002-0359; classtype:rpc-portmap-decode; sid:2102083; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rpc.xfsmd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 05 F7|h"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,5072; reference:bugtraq,5075; reference:cve,2002-0359; classtype:rpc-portmap-decode; sid:2102082; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rpc.xfsmd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 05 F7|h"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,5072; reference:bugtraq,5075; reference:cve,2002-0359; classtype:rpc-portmap-decode; sid:2102081; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射nlockmgr请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B5|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,1372; reference:cve,2000-0508; classtype:rpc-portmap-decode; sid:2102080; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射nlockmgr请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B5|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,1372; reference:cve,2000-0508; classtype:rpc-portmap-decode; sid:2102079; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射网络状态监视器请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 03 0D|p"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; classtype:rpc-portmap-decode; sid:2102036; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射网络状态监视器请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 03 0D|p"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; classtype:rpc-portmap-decode; sid:2102035; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCypserv映射列表请求UDP"; content:"|00 01 86 A4|"; depth:4; offset:12; content:"|00 00 00 0B|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,5914; reference:bugtraq,6016; reference:cve,2002-1232; classtype:rpc-portmap-decode; sid:2102033; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd用户更新TCP"; flow:to_server,established; content:"|00 01 86 A9|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102032; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd用户更新UDP"; content:"|00 01 86 A9|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102031; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd新密码溢出尝试TCP"; flow:to_server,established; content:"|00 01 86 A9|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,0,relative,align; byte_jump:4,0,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102030; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd新密码溢出尝试UDP"; content:"|00 01 86 A9|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_jump:4,0,relative,align; byte_jump:4,0,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102029; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd旧密码溢出尝试TCP"; flow:to_server,established; content:"|00 01 86 A9|"; depth:4; offset:16; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102028; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCyppasswd旧密码溢出尝试UDP"; content:"|00 01 86 A9|"; depth:4; offset:12; content:"|00 00 00 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,64,0,relative; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2763; reference:cve,2001-0779; classtype:rpc-portmap-decode; sid:2102027; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert udp $EXTERNAL_NET any -> $HOME_NET 88 (msg:"GPL RPCkerberos主名称溢出UDP"; content:"j"; depth:1; content:"|01 A1|"; asn1:oversize_length 1024,relative_offset -1; reference:url,web.mit.edu/kerberos/www/advisories/MITKRB5-SA-2003-005-buf.txt; classtype:attempted-admin; sid:2102578; rev:4; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 88 (msg:"GPL RPCkerberos主名称溢出TCP"; flow:to_server,established; content:"j"; depth:1; offset:4; content:"|01 A1|"; asn1:oversize_length 1024,relative_offset -1; reference:url,web.mit.edu/kerberos/www/advisories/MITKRB5-SA-2003-005-buf.txt; classtype:attempted-admin; sid:2102579; rev:4; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ttdbserv请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 F3|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,24; reference:bugtraq,122; reference:bugtraq,3382; reference:cve,1999-0003; reference:cve,1999-0687; reference:cve,1999-1075; reference:cve,2001-0717; reference:url,www.cert.org/advisories/CA-2001-05.html; classtype:rpc-portmap-decode; sid:2101274; rev:19; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPCsnmpXdmi溢出尝试TCP"; flow:to_server,established; content:"|00 01 87 99|"; depth:4; offset:16; content:"|00 00 01 01|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; byte_test:4,>,1024,20,relative; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2417; reference:cve,2001-0236; reference:url,www.cert.org/advisories/CA-2001-05.html; classtype:attempted-admin; sid:2100569; rev:15; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射sadmind请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 88|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,20; classtype:rpc-portmap-decode; sid:2100585; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射yppasswd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A9|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,14; classtype:rpc-portmap-decode; sid:2100589; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ypserv请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A4|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,12; reference:bugtraq,5914; reference:bugtraq,6016; reference:cve,2000-1042; reference:cve,2000-1043; reference:cve,2002-1232; classtype:rpc-portmap-decode; sid:2100590; rev:13; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ypupdated请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 BC|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,125; classtype:rpc-portmap-decode; sid:2100591; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射snmpXdmi请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 99|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2417; reference:cve,2001-0236; reference:url,www.cert.org/advisories/CA-2001-05.html; classtype:rpc-portmap-decode; sid:2100593; rev:19; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射espd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 05 F7|u"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:bugtraq,2714; reference:cve,2001-0331; classtype:rpc-portmap-decode; sid:2100595; rev:17; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC列出TCP 111的端口映射"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 04|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,428; classtype:rpc-portmap-decode; sid:2100598; rev:13; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 513 (msg:"GPL RPC利努克尼斯"; flow:to_server,established; content:"|3A 3A 3A 3A 3A 3A 3A 3A 00 3A 3A 3A 3A 3A 3A 3A 3A|"; classtype:bad-unknown; sid:2100601; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $HOME_NET 513 -> $EXTERNAL_NET any (msg:"GPL RPCrlogin登录失败"; flow:from_server,established; content:"login incorrect"; reference:arachnids,393; classtype:unsuccessful-user; sid:2100605; rev:7; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $HOME_NET 513 -> $EXTERNAL_NET any (msg:"GPL RPCrlogin登录失败"; flow:from_server,established; content:"|01|rlogind|3A| Permission denied."; reference:arachnids,392; classtype:unsuccessful-user; sid:2100611; rev:8; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"GPL RPC已装入的TCP导出请求"; flow:to_server,established; content:"|00 01 86 A5|"; depth:4; offset:16; content:"|00 00 00 05|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,26; classtype:attempted-recon; sid:2100574; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射管理请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 F7|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,18; classtype:rpc-portmap-decode; sid:2100575; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射amountd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 03|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,19; classtype:rpc-portmap-decode; sid:2100576; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射bootparam请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 BA|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,16; reference:cve,1999-0647; classtype:rpc-portmap-decode; sid:2100577; rev:14; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射cmsd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 E4|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,17; classtype:rpc-portmap-decode; sid:2100578; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射列表UDP 111"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 04|"; within:4; distance:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,428; classtype:rpc-portmap-decode; sid:2101280; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射mountd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A5|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,13; classtype:rpc-portmap-decode; sid:2100579; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射nisd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 CC|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,21; classtype:rpc-portmap-decode; sid:2100580; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射pcnfsd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 02|I|F1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,22; classtype:rpc-portmap-decode; sid:2100581; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rexd请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,23; classtype:rpc-portmap-decode; sid:2100582; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射Stat请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,10; classtype:rpc-portmap-decode; sid:2100583; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射用户请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A2|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,133; reference:cve,1999-0626; classtype:rpc-portmap-decode; sid:2100584; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射选择svc请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 AF|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,25; classtype:rpc-portmap-decode; sid:2100586; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射snmpXdmi请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 99|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:bugtraq,2417; reference:cve,2001-0236; reference:url,www.cert.org/advisories/CA-2001-05.html; classtype:rpc-portmap-decode; sid:2101279; rev:15; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射状态请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B8|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,15; classtype:rpc-portmap-decode; sid:2100587; rev:9; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert udp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ttdbserv请求UDP"; content:"|00 01 86 A0|"; depth:4; offset:12; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 F3|"; within:4; content:"|00 00 00 00|"; depth:4; offset:4; reference:arachnids,24; reference:bugtraq,122; reference:bugtraq,3382; reference:cve,1999-0003; reference:cve,1999-0687; reference:cve,1999-1075; reference:cve,2001-0717; reference:url,www.cert.org/advisories/CA-2001-05.html; classtype:rpc-portmap-decode; sid:2100588; rev:18; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射用户请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A2|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,133; reference:cve,1999-0626; classtype:rpc-portmap-decode; sid:2101271; rev:15; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射cmsd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 E4|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,17; classtype:rpc-portmap-decode; sid:2101265; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射rexd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 B1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,23; classtype:rpc-portmap-decode; sid:2101269; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射yppasswd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A9|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,14; classtype:rpc-portmap-decode; sid:2101275; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射管理请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 F7|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,18; classtype:rpc-portmap-decode; sid:2101262; rev:10; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射Stat请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,10; classtype:rpc-portmap-decode; sid:2101270; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射选择/svc请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 AF|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,25; classtype:rpc-portmap-decode; sid:2101273; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射pcnfsd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 02|I|F1|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,22; classtype:rpc-portmap-decode; sid:2101268; rev:13; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射amountd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 03|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,19; classtype:rpc-portmap-decode; sid:2101263; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射nisd请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 CC|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,21; classtype:rpc-portmap-decode; sid:2101267; rev:12; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射sadmind请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 87 88|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,20; classtype:rpc-portmap-decode; sid:2101272; rev:11; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射ypserv请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 A4|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,12; reference:bugtraq,5914; reference:bugtraq,6016; reference:cve,2000-1042; reference:cve,2000-1043; reference:cve,2002-1232; classtype:rpc-portmap-decode; sid:2101276; rev:15; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET 111 (msg:"GPL RPC端口映射bootparam请求TCP"; flow:to_server,established; content:"|00 01 86 A0|"; depth:4; offset:16; content:"|00 00 00 03|"; within:4; distance:4; byte_jump:4,4,relative,align; byte_jump:4,4,relative,align; content:"|00 01 86 BA|"; within:4; content:"|00 00 00 00|"; depth:4; offset:8; reference:arachnids,16; reference:cve,1999-0647; classtype:rpc-portmap-decode; sid:2101264; rev:14; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+alert tcp any any -> $HOME_NET 135 (msg:"ET RPC DCERPC SVCCTL-远程服务控制管理器访问"; flow:established,to_server; content:"|00 00 00 00 00 00 00 00|"; content:"|13 00 0d 81 bb 7a 36 44 98 f1 35 ad 32 98 f0 38 00 10 03|"; distance:0; within:100; metadata: former_category RPC; classtype:attempted-user; sid:2027237; rev:2; metadata:affected_product Windows_XP_Vista_7_8_10_Server_32_64_Bit, attack_target Client_and_Server, deployment Perimeter, signature_severity Major, created_at 2019_04_22, performance_impact Low, updated_at 2019_04_22;)
+
